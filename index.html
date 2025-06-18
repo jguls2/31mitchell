@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Birthday Escape Room</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: #fdf6e3;
+      padding: 20px;
+      margin: 0;
+    }
+    .hidden { display: none; }
+    .section { margin-bottom: 30px; padding: 20px; border: 2px dashed #444; border-radius: 15px; background: #fff; }
+    .section h2 { margin-top: 0; }
+    input[type="text"] { padding: 8px; width: 200px; }
+    button { padding: 8px 15px; cursor: pointer; margin-left: 10px; }
+    #progressBar {
+      width: 100%; background: #eee; height: 20px; border-radius: 10px; margin-bottom: 20px;
+    }
+    #progressFill {
+      width: 0%; height: 100%; background: #48a9a6; border-radius: 10px; transition: width 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <div id="landingPage">
+    <h1>Welcome, Cowboy 🐎</h1>
+    <p>Enter the password to begin:</p>
+    <input id="passwordInput" type="text" placeholder="Password" />
+    <button onclick="checkPassword()">Enter</button>
+  </div>
+
+  <div id="mainGame" class="hidden">
+    <h2>Happy 31st Birthday 🎉</h2>
+    <p>Happy 31st birthday, cowboy. You make life brighter, funnier, and a whole lot more full of love. Today is all about celebrating you — so kick off your boots and get ready for a wild ride through puzzles, memories, and a few surprises along the way.</p>
+
+    <div id="countdown"></div>
+    <div id="progressBar"><div id="progressFill"></div></div>
+
+    <div id="puzzles"></div>
+
+    <div id="finalMessage" class="hidden">
+      <h2>🎁 Final Surprise</h2>
+      <p>You did it, legend. Time to pack a bag and get dressed up — let’s have some champagne and celebrate the incredible human you are. I hope you enjoyed this birthday game and you’re ready for a fun night.</p>
+    </div>
+  </div>
+
+  <script>
+    const password = "31timeforfun";
+    const puzzles = [
+      { id: 1, clue: "Under the desk — What's a classic spot for secrets and documents?", answer: "briefcase" },
+      { id: 2, clue: "Under the pillow — A sweet nickname for someone you adore?", answer: "honey B" },
+      { id: 3, clue: "On the fridge — Think about what you pack with love.", answer: "lunchbox" },
+      { id: 4, clue: "In the buffet drawer — Decode this cowboy slang for the evening meal.", answer: "Dinner" },
+      { id: 5, clue: "On the pushbike — High-energy show with wild stunts?", answer: "Nitro Circus" },
+      { id: 6, clue: "Online-only — The name of the romantic hotel surprise.", answer: "Rambutan" },
+    ];
+
+    let solved = [];
+
+    function checkPassword() {
+      const input = document.getElementById('passwordInput').value.trim().toLowerCase();
+      if (input === password.toLowerCase()) {
+        document.getElementById('landingPage').classList.add('hidden');
+        document.getElementById('mainGame').classList.remove('hidden');
+        loadPuzzles();
+        startCountdown();
+      } else {
+        alert('Yeehaw! That ain\'t it. Try again.');
+      }
+    }
+
+    function loadPuzzles() {
+      const container = document.getElementById('puzzles');
+      puzzles.forEach(puzzle => {
+        const div = document.createElement('div');
+        div.classList.add('section');
+        div.innerHTML = `<h3>Puzzle ${puzzle.id}</h3><p>${puzzle.clue}</p><input id="input-${puzzle.id}" type="text" placeholder="Your answer" /><button onclick="checkPuzzle(${puzzle.id})">Submit</button>`;
+        container.appendChild(div);
+      });
+    }
+
+    function checkPuzzle(id) {
+      const input = document.getElementById(`input-${id}`).value.trim();
+      const puzzle = puzzles.find(p => p.id === id);
+      if (input.toLowerCase() === puzzle.answer.toLowerCase()) {
+        if (!solved.includes(id)) {
+          solved.push(id);
+          document.getElementById(`input-${id}`).disabled = true;
+          updateProgress();
+        }
+      } else {
+        alert('Nope! Give it another go.');
+      }
+    }
+
+    function updateProgress() {
+      const percent = (solved.length / puzzles.length) * 100;
+      document.getElementById('progressFill').style.width = `${percent}%`;
+      if (solved.length === puzzles.length) {
+        document.getElementById('finalMessage').classList.remove('hidden');
+      }
+    }
+
+    function startCountdown() {
+      const target = new Date('June 20, 2025 18:30:00').getTime();
+      const timer = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = target - now;
+        if (distance < 0) {
+          clearInterval(timer);
+          document.getElementById('countdown').innerText = '🎉 It\'s party time!';
+          return;
+        }
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        document.getElementById('countdown').innerText = `⏰ Countdown to fun: ${hours}h ${minutes}m ${seconds}s`;
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
