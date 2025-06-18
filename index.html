@@ -50,12 +50,12 @@
   <script>
     const password = "31timeforfun";
     const puzzles = [
-      { id: 1, clue: "Under the desk — What's a classic spot for secrets and documents?", answer: "briefcase" },
-      { id: 2, clue: "Under the pillow — A sweet nickname for someone you adore?", answer: "honey B" },
-      { id: 3, clue: "On the fridge — Think about what you pack with love.", answer: "lunchbox" },
-      { id: 4, clue: "In the buffet drawer — Decode this cowboy slang for the evening meal.", answer: "Dinner" },
-      { id: 5, clue: "On the pushbike — High-energy show with wild stunts?", answer: "Nitro Circus" },
-      { id: 6, clue: "Online-only — The name of the romantic hotel surprise.", answer: "Rambutan" },
+      { id: 1, clue: "I'm beneath where work gets done, hidden from sight, where secrets are kept away from the light.", answer: "briefcase" },
+      { id: 2, clue: "Lay your head and close your eyes, where dreams are made and love lies.", answer: "honey B" },
+      { id: 3, clue: "I keep things cool, I hum all day, I store your snacks in a chilly way.", answer: "lunchbox" },
+      { id: 4, clue: "Inside the drawer that holds the fine, look for clues where we store things to dine.", answer: "Dinner" },
+      { id: 5, clue: "Wheels and pedals, outdoors I roll, where tricks and balance are part of the goal.", answer: "Nitro Circus" },
+      { id: 6, clue: "Final treat, a place to stay, tropical name, not far away.", answer: "Rambutan" },
     ];
 
     let solved = [];
@@ -74,10 +74,12 @@
 
     function loadPuzzles() {
       const container = document.getElementById('puzzles');
-      puzzles.forEach(puzzle => {
+      puzzles.forEach((puzzle, index) => {
         const div = document.createElement('div');
         div.classList.add('section');
+        div.id = `puzzle-${puzzle.id}`;
         div.innerHTML = `<h3>Puzzle ${puzzle.id}</h3><p>${puzzle.clue}</p><input id="input-${puzzle.id}" type="text" placeholder="Your answer" /><button onclick="checkPuzzle(${puzzle.id})">Submit</button>`;
+        if (index !== 0) div.classList.add('hidden');
         container.appendChild(div);
       });
     }
@@ -90,6 +92,9 @@
           solved.push(id);
           document.getElementById(`input-${id}`).disabled = true;
           updateProgress();
+          document.getElementById(`puzzle-${id}`).classList.add('hidden');
+          const next = puzzles.find(p => p.id === id + 1);
+          if (next) document.getElementById(`puzzle-${next.id}`).classList.remove('hidden');
         }
       } else {
         alert('Nope! Give it another go.');
